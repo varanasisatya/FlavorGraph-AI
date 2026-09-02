@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Explainable recipe recommendations powered by a culinary knowledge graph.">
+    <title>FlavorGraph AI — Explainable Culinary Intelligence</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script defer src="https://unpkg.com/cytoscape@3.30.2/dist/cytoscape.min.js"></script>
+    <script defer src="{{ url_for('static', filename='app.js') }}"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#recommendation-lab">Skip to recommendation lab</a>
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="FlavorGraph AI home">
+        <span class="brand-mark">FG</span><span>FlavorGraph <b>AI</b></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#recommendation-lab">Recommend</a><a href="#graph-story">Graph</a><a href="#evaluation">Evaluation</a>
+      </nav>
+      <a class="header-cta" href="https://github.com/varanasisatya/FlavorGraph" target="_blank" rel="noreferrer">View source ↗</a>
+    </header>
+
+    <main id="top">
+      <section class="hero section-shell">
+        <div class="hero-copy">
+          <p class="eyebrow"><span></span> Explainable culinary intelligence</p>
+          <h1>Your pantry is<br>a <em>knowledge graph.</em></h1>
+          <p class="hero-lede">FlavorGraph AI turns the ingredients you already own into ranked, explainable recipe paths—connecting pantry coverage, substitutions and shared flavor notes.</p>
+          <div class="hero-actions">
+            <a class="button primary" href="#recommendation-lab">Explore your pantry <span>↘</span></a>
+            <a class="button ghost" href="#graph-story">How the model reasons</a>
+          </div>
+          <div class="hero-stats" aria-label="Knowledge graph statistics">
+            <div><strong>{{ catalog.nodes }}</strong><span>graph nodes</span></div>
+            <div><strong>{{ catalog.edges }}</strong><span>typed edges</span></div>
+            <div><strong>{{ catalog.cuisines|length }}</strong><span>cuisines</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+          <div class="hero-node main-node"><span>AI</span><small>hybrid ranker</small></div>
+          <div class="hero-node ingredient-node node-a">tomato</div>
+          <div class="hero-node ingredient-node node-b">umami</div>
+          <div class="hero-node ingredient-node node-c">recipe</div>
+          <svg viewBox="0 0 600 600" role="presentation"><path d="M120 180 C260 130 280 250 310 300"/><path d="M480 155 C380 160 365 230 310 300"/><path d="M470 450 C390 400 355 345 310 300"/></svg>
+          <p class="visual-caption">INGREDIENT → FLAVOR → RECIPE</p>
+        </div>
+      </section>
+
+      <section class="marquee" aria-label="Model capabilities"><div>KNOWLEDGE GRAPH <span>✦</span> PERSONALIZED PAGERANK <span>✦</span> EXPLAINABLE RANKING <span>✦</span> SMART SUBSTITUTIONS <span>✦</span> KNOWLEDGE GRAPH <span>✦</span></div></section>
+
+      <section id="recommendation-lab" class="lab section-shell">
+        <div class="section-heading">
+          <div><p class="eyebrow"><span></span> Live inference</p><h2>Build a meal from<br><em>what you have.</em></h2></div>
+          <p>The model propagates your pantry signal through ingredient, flavor and recipe nodes, then blends graph proximity with practical coverage.</p>
+        </div>
+        <div class="lab-grid">
+          <form id="recommend-form" class="control-panel">
+            <div class="control-header"><span>01</span><div><strong>Pantry signal</strong><small>Comma-separated ingredients</small></div></div>
+            <label for="ingredients">What is in your kitchen?</label>
+            <textarea id="ingredients" rows="4" placeholder="tomatoes, onion, garlic, rice, eggs" required>tomatoes, onion, garlic, rice, eggs</textarea>
+            <div class="quick-add" aria-label="Quick ingredient suggestions">
+              <button type="button" data-ingredient="chickpeas">+ chickpeas</button><button type="button" data-ingredient="coconut milk">+ coconut milk</button><button type="button" data-ingredient="lemon">+ lemon</button><button type="button" data-ingredient="broccoli">+ broccoli</button>
+            </div>
+            <div class="filter-grid">
+              <label>Diet<select id="diet"><option value="any">Any diet</option><option value="vegetarian">Vegetarian</option><option value="vegan">Vegan</option><option value="non_vegetarian">Non-vegetarian</option></select></label>
+              <label>Maximum time<select id="max-time"><option value="">Any duration</option><option value="15">15 minutes</option><option value="30">30 minutes</option><option value="45">45 minutes</option></select></label>
+              <label>Cuisine<select id="cuisine"><option value="any">Any cuisine</option>{% for cuisine in catalog.cuisines %}<option value="{{ cuisine }}">{{ cuisine }}</option>{% endfor %}</select></label>
+              <label>Exclude allergens<input id="allergies" type="text" placeholder="dairy, gluten"></label>
+            </div>
+            <button class="button primary submit-button" type="submit"><span>Run graph inference</span><b>→</b></button>
+            <p class="model-note">Deterministic model • no API key • every score is inspectable</p>
+          </form>
+          <div class="results-panel" aria-live="polite">
+            <div class="results-header"><div><span class="status-dot"></span><strong>Ranked recommendations</strong></div><small id="result-count">Waiting for inference</small></div>
+            <div id="loading" class="loading-state" hidden><span></span><p>Propagating pantry signals across the graph…</p></div>
+            <div id="empty-state" class="empty-state"><span>⌁</span><h3>Your recipe paths will appear here.</h3><p>Run the model to see match scores, missing ingredients, substitutions and flavor bridges.</p></div>
+            <div id="results" class="results-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="graph-story" class="graph-section section-shell">
+        <div class="graph-copy">
+          <p class="eyebrow"><span></span> Model interpretability</p><h2>See the path<br>behind every <em>prediction.</em></h2>
+          <p>Unlike a black-box recipe generator, FlavorGraph exposes the relationships that shaped each result.</p>
+          <ol><li><b>Pantry coverage</b><span>Exact and substitute ingredients provide the practical signal.</span></li><li><b>Graph propagation</b><span>Personalized PageRank carries relevance across typed relationships.</span></li><li><b>Flavor alignment</b><span>Shared aromatic and taste notes provide explainable bridges.</span></li></ol>
+        </div>
+        <div class="graph-card">
+          <div class="graph-toolbar"><strong>Interactive inference graph</strong><div class="legend"><span class="l-pantry">Pantry</span><span class="l-recipe">Recipe</span><span class="l-flavor">Flavor</span></div></div>
+          <div id="knowledge-graph" aria-label="Interactive recommendation knowledge graph"></div><p id="graph-fallback">Run an inference to generate a focused graph explanation.</p>
+        </div>
+      </section>
+
+      <section id="evaluation" class="evaluation section-shell">
+        <div class="section-heading compact"><div><p class="eyebrow"><span></span> Reproducible evaluation</p><h2>Measured, not merely <em>marketed.</em></h2></div><p>The evaluation observes 45% of each recipe, injects realistic substitution noise and compares the hybrid graph ranker with an exact-overlap baseline.</p></div>
+        <div id="metric-grid" class="metric-grid"><article><span>Hybrid Hit Rate@3</span><strong>—</strong><small>loading evaluation</small></article><article><span>Hybrid MRR</span><strong>—</strong><small>ranking quality</small></article><article><span>Catalog Coverage</span><strong>—</strong><small>recommendation diversity</small></article><article><span>Evaluation Queries</span><strong>—</strong><small>deterministic holdouts</small></article></div>
+      </section>
+    </main>
+    <footer><div class="brand"><span class="brand-mark">FG</span><span>FlavorGraph <b>AI</b></span></div><p>Built as an honest, explainable AI/ML engineering portfolio project.</p><a href="#top">Back to top ↑</a></footer>
+  </body>
+</html>

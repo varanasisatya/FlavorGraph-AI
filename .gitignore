@@ -1,0 +1,18 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+coverage.xml
+htmlcov/
+.coverage
+.DS_Store
+Thumbs.db
+
+# Artifact retained only in the source ZIP; the corrected image is banana_smoothie.jpg.
+static/banana_smoothie.jpg generate image.jpg
