@@ -2,6 +2,11 @@
 
 > An explainable culinary recommendation system that turns pantry ingredients into ranked recipe paths using a heterogeneous knowledge graph and Personalized PageRank.
 
+### [🚀 Open the live application](https://flavorgraph-ai.onrender.com)
+
+[![Live on Render](https://img.shields.io/badge/Live%20Demo-Render-46E3B7?logo=render&logoColor=white)](https://flavorgraph-ai.onrender.com)
+[![CI](https://github.com/varanasisatya/FlavorGraph-AI/actions/workflows/ci.yml/badge.svg)](https://github.com/varanasisatya/FlavorGraph-AI/actions/workflows/ci.yml)
+
 ![FlavorGraph AI interface](docs/flavorgraph-home.png)
 
 ## Why this project exists
